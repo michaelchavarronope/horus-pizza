@@ -1,5 +1,4 @@
 // FRONTEND/js/admin_reportes.js
-const API_URL = 'http://127.0.0.1:8000/api/v1';
 
 let empleado = null;
 
@@ -29,8 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.clear();
-    window.location.href = './login.html';
+    logoutAndRedirect();
   });
 
   document.getElementById('navResumen').addEventListener('click', () => {
@@ -76,15 +74,7 @@ function renderVentasDia(data) {
     ventasEl.textContent = '$' + totalHoy.toLocaleString();
   }
 
-  let facturasHoy = [];
-  const hoyStr = new Date().toISOString().slice(0, 10);
-  const ultimas = data.ultimas_facturas || [];
-
-  facturasHoy = ultimas.filter(f => {
-    if (!f.fecha_emision) return false;
-    const soloFecha = String(f.fecha_emision).split(' ')[0];
-    return soloFecha === hoyStr;
-  });
+  const facturasHoy = data.facturas_hoy || [];
 
   const cantidadHoy = data.facturas_dia ?? facturasHoy.length;
   const facturasEl = document.getElementById('facturasDiaTotal');

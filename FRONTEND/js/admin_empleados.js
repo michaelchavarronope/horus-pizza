@@ -1,5 +1,4 @@
 // FRONTEND/js/admin_empleados.js
-const API_URL = 'http://127.0.0.1:8000/api/v1';
 
 let empleado = null;
 let sucursales = [];
@@ -36,8 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.clear();
-    window.location.href = './login.html';
+    logoutAndRedirect();
   });
 
   document.getElementById('btnVolver').addEventListener('click', () => {

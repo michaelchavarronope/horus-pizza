@@ -78,6 +78,12 @@ public function pedidoActivoPorMesa($idMesa)
 
     // �?O YA NO TOCAMOS EL ESTADO DE LA MESA AQU�?
 
+    $mesa = Mesa::find($validated['id_mesa']);
+    if ($mesa) {
+        $mesa->estado = 'Ocupada';
+        $mesa->save();
+    }
+
     $pedido = Pedido::create([
         'id_mesa'     => $validated['id_mesa'],
         'id_empleado' => $validated['id_empleado'],
@@ -122,6 +128,11 @@ public function pedidoActivoPorMesa($idMesa)
         if ($tieneActivo) {
             return response()->json(['message' => 'La nueva mesa ya tiene un pedido activo'], 400);
         }
+
+        if ($mesaNueva) {
+            $mesaNueva->estado = 'Ocupada';
+            $mesaNueva->save();
+        }
     }
 
     // �o. Si cambia el estado del pedido, actualizamos el estado de la mesa
@@ -160,8 +171,10 @@ public function pedidoActivoPorMesa($idMesa)
 
         // Liberar mesa
         $mesa = Mesa::find($pedido->id_mesa);
-        $mesa->estado = 'Disponible';
-        $mesa->save();
+        if ($mesa) {
+            $mesa->estado = 'Disponible';
+            $mesa->save();
+        }
 
         // Eliminar pedido
         $pedido->delete();

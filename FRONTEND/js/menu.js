@@ -1,7 +1,5 @@
 // FRONTEND/js/menu.js
 
-const API_URL = 'http://127.0.0.1:8000/api/v1';
-
 let pedidoActual = null;
 let categorias = [];
 let categoriaActiva = null;
@@ -10,7 +8,7 @@ function authHeaders(json = false) {
   const token = sessionStorage.getItem('token');
   const base = token ? { Authorization: `Bearer ${token}` } : {};
   if (json) return { 'Content-Type': 'application/json', Accept: 'application/json', ...base };
-  return base;
+  return { Accept: 'application/json', ...base };
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -80,8 +78,9 @@ async function cargarProductos(idCategoria) {
     const li = document.createElement('li');
     li.classList.add('item-producto');
 
+    const baseUrl = API_URL.replace('/api/v1', '');
     const rutaImg = prod.imagen
-      ? `http://127.0.0.1:8000/${prod.imagen}`
+      ? `${baseUrl}/${prod.imagen}`
       : '../img/default.jpg';
 
     li.innerHTML = `

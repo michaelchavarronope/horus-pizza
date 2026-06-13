@@ -1,5 +1,4 @@
 // FRONTEND/js/caja.js
-const API_URL = 'http://127.0.0.1:8000/api/v1';
 
 let empleado = null;
 let pedidosCaja = [];
@@ -39,8 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const logoutBtn = document.getElementById('logoutBtn');
   logoutBtn.addEventListener('click', () => {
-    sessionStorage.clear();
-    window.location.href = './login.html';
+    logoutAndRedirect();
   });
 
   document.getElementById('btnRealizarPago').addEventListener('click', abrirModalPago);

@@ -44,4 +44,13 @@ class LoginController extends Controller
             'token'    => $login->api_token,
         ], 200);
     }
+
+    public function logout(Request $request)
+    {
+        $token = $request->bearerToken();
+        if ($token) {
+            Login::where('api_token', $token)->update(['api_token' => null]);
+        }
+        return response()->json(['message' => 'Sesión cerrada correctamente']);
+    }
 }

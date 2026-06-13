@@ -14,9 +14,11 @@ class FacturaController extends Controller
     // Listar facturas (por si las necesitas)
     public function index()
     {
-        return Factura::with(['pedido.mesa', 'detalles'])
-            ->orderBy('id_factura', 'desc')
-            ->get();
+        return response()->json(
+            Factura::with(['pedido.mesa', 'detalles'])
+                ->orderBy('id_factura', 'desc')
+                ->get()
+        );
     }
 
     // Ver una factura específica
@@ -58,14 +60,10 @@ class FacturaController extends Controller
         $impuesto = $subtotal * $tasaIva;
         $total = $subtotal + $impuesto;
 
-        // Generar número de factura simple
-        $consecutivo = Factura::count() + 1;
-        $numero = 'FAC-' . str_pad($consecutivo, 6, '0', STR_PAD_LEFT);
-
-        // Crear factura
+        // Crear factura - número basado en el ID auto-incremental para evitar duplicados
         $factura = Factura::create([
             'id_pedido'      => $pedido->id_pedido,
-            'numero_factura' => $numero,
+            'numero_factura' => 'FAC-TEMP',
             'id_cliente'     => null,
             'subtotal'       => $subtotal,
             'impuesto'       => $impuesto,
@@ -74,6 +72,8 @@ class FacturaController extends Controller
             'estado'         => 'Emitida',
             'estado_pago'    => 'Pagado',
         ]);
+        $factura->numero_factura = 'FAC-' . str_pad($factura->id_factura, 6, '0', STR_PAD_LEFT);
+        $factura->save();
 
         // Crear detalle_factura a partir de detalle_pedido
         foreach ($pedido->detalles as $item) {

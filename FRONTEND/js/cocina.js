@@ -1,7 +1,5 @@
 // FRONTEND/js/cocina.js
 
-const API_URL = 'http://127.0.0.1:8000/api/v1';
-
 let empleado = null;
 
 function authHeaders(json = false) {
@@ -42,8 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const logoutBtn = document.getElementById('logoutBtn');
   logoutBtn.addEventListener('click', () => {
-    sessionStorage.clear();
-    window.location.href = './login.html';
+    logoutAndRedirect();
   });
 
   cargarPedidosCocina();
@@ -100,7 +97,7 @@ function renderPedidos(pedidos) {
         ${ (p.detalles || []).map(det => `
           <li>
             <span>${det.cantidad} x ${det.platillo?.nombre ?? 'Producto ' + det.id_platillo}</span>
-            <span>$${det.subtotal}</span>
+            <span>$${Number(det.subtotal).toLocaleString()}</span>
           </li>
         `).join('') }
       </ul>

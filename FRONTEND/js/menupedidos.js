@@ -1,5 +1,4 @@
 // FRONTEND/js/menupedidos.js
-const API_URL = 'http://127.0.0.1:8000/api/v1';
 
 let pedidoActual = null;
 let pedidoData = null;
@@ -83,7 +82,7 @@ async function cargarPedido() {
       lista.appendChild(li);
     });
 
-    document.getElementById('totalPedido').textContent = pedido.total ?? 0;
+    document.getElementById('totalPedido').textContent = Number(pedido.total ?? 0).toLocaleString();
     actualizarBotonEnviar(pedido.estado);
 
   } catch (err) {
@@ -114,28 +113,38 @@ function actualizarBotonEnviar(estado) {
 
 async function cambiarCantidad(idDetalle, nuevaCantidad) {
   try {
-    await fetch(`${API_URL}/detalles/${idDetalle}`, {
+    const res = await fetch(`${API_URL}/detalles/${idDetalle}`, {
       method: 'PUT',
       headers: authHeaders(true),
       body: JSON.stringify({ cantidad: nuevaCantidad })
     });
-
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      alert(errData.message || 'No se pudo actualizar la cantidad');
+      return;
+    }
     await cargarPedido();
   } catch (err) {
     console.error('Error cambiando cantidad', err);
+    alert('Error al cambiar la cantidad');
   }
 }
 
 async function eliminarDetalle(idDetalle) {
   try {
-    await fetch(`${API_URL}/detalles/${idDetalle}`, {
+    const res = await fetch(`${API_URL}/detalles/${idDetalle}`, {
       method: 'DELETE',
       headers: authHeaders()
     });
-
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      alert(errData.message || 'No se pudo eliminar el ítem');
+      return;
+    }
     await cargarPedido();
   } catch (err) {
     console.error('Error eliminando detalle', err);
+    alert('Error al eliminar el ítem');
   }
 }
 
